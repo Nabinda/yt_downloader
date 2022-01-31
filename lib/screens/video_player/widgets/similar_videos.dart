@@ -1,38 +1,38 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:numeral/fun.dart';
+import 'package:numeral/numeral.dart';
 import 'package:provider/provider.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
-import 'package:yt_downloader/screens/video_player/video_player.dart';
-import '/provider/api_content.dart';
+import 'package:yt_downloader/provider/api_content.dart';
 import 'package:yt_downloader/utils/time_ago.dart';
 
-//TODO::more button fuctions
-class SearchResults extends StatefulWidget {
-  const SearchResults({Key? key}) : super(key: key);
+import '../video_player.dart';
+
+class SimilarVideos extends StatefulWidget {
+  const SimilarVideos({Key? key}) : super(key: key);
 
   @override
-  State<SearchResults> createState() => _SearchResultsState();
+  _SimilarVideosState createState() => _SimilarVideosState();
 }
 
-class _SearchResultsState extends State<SearchResults> {
-  final TimeAgo timeAgo = TimeAgo();
-
-
+class _SimilarVideosState extends State<SimilarVideos> {
+  TimeAgo timeAgo = TimeAgo();
+  @override
+  void initState() {
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
-    ///Change in case of using API
-    return StreamBuilder<SearchList>(
-        stream: Provider.of<APIContent>(context).searchResult.stream,
-        builder: (context, AsyncSnapshot<SearchList> snapshot) {
+    return StreamBuilder<List<Video>>(
+        stream: Provider.of<APIContent>(context).similarVideos.stream,
+        builder: (context, AsyncSnapshot<List<Video>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return SizedBox(
-                height: MediaQuery.of(context).size.height * 0.84,
+                height: MediaQuery.of(context).size.height * 0.45,
                 child: const Center(child: CircularProgressIndicator()));
           } else if (snapshot.connectionState == ConnectionState.active) {
-            return Container(
-              padding: const EdgeInsets.only(top: 10, bottom: 30),
-              height: MediaQuery.of(context).size.height * 0.84,
+            return SizedBox(
+              height: MediaQuery.of(context).size.height * 0.45,
               child: ListView(
                 children: snapshot.data!.map<Widget>(listItem).toList(),
               ),
@@ -46,6 +46,7 @@ class _SearchResultsState extends State<SearchResults> {
   Widget listItem(Video video) {
     return InkWell(
       onTap: () {
+        Provider.of<APIContent>(context,listen: false).clearSimilarSearch();
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) {
@@ -71,19 +72,19 @@ class _SearchResultsState extends State<SearchResults> {
                     video.duration == null
                         ? Container()
                         : Positioned(
-                            right: 0,
-                            bottom: 0,
-                            child: Container(
-                                margin: const EdgeInsets.only(
-                                    bottom: 5.0, right: 5.0),
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 2.0, horizontal: 5.0),
-                                color: Colors.black,
-                                child: Text(
-                                  timeAgo.formatDuration(video.duration!),
-                                  style: const TextStyle(
-                                      color: Colors.white, fontSize: 12),
-                                )))
+                        right: 0,
+                        bottom: 0,
+                        child: Container(
+                            margin: const EdgeInsets.only(
+                                bottom: 5.0, right: 5.0),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 2.0, horizontal: 5.0),
+                            color: Colors.black,
+                            child: Text(
+                              timeAgo.formatDuration(video.duration!),
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 12),
+                            )))
                   ],
                 ),
               ),
@@ -118,8 +119,8 @@ class _SearchResultsState extends State<SearchResults> {
                           video.uploadDate == null
                               ? const TextSpan(text: 'No Data')
                               : TextSpan(
-                                  text:
-                                      timeAgo.uploadTimeAgo(video.uploadDate!)),
+                              text:
+                              timeAgo.uploadTimeAgo(video.uploadDate!)),
                         ],
                       ),
                     ),
@@ -148,19 +149,19 @@ class _SearchResultsState extends State<SearchResults> {
                     color: Colors.black,
                   ),
                   itemBuilder: (context) => [
-                        const PopupMenuItem(
-                          child: Text("Share"),
-                          value: 1,
-                        ),
-                        const PopupMenuItem(
-                          child: Text("Add to Favourites"),
-                          value: 2,
-                        ),
-                        const PopupMenuItem(
-                          child: Text("Download"),
-                          value: 2,
-                        )
-                      ])
+                    const PopupMenuItem(
+                      child: Text("Share"),
+                      value: 1,
+                    ),
+                    const PopupMenuItem(
+                      child: Text("Add to Favourites"),
+                      value: 2,
+                    ),
+                    const PopupMenuItem(
+                      child: Text("Download"),
+                      value: 2,
+                    )
+                  ])
             ],
           ),
         ),

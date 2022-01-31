@@ -1,10 +1,14 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:water_drop_nav_bar/water_drop_nav_bar.dart';
+import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import 'package:yt_downloader/provider/api_content.dart';
 import 'package:yt_downloader/screens/download_screen/download_screen.dart';
+import 'package:yt_downloader/screens/favourite_screen/favourite_screen.dart';
 import 'package:yt_downloader/screens/home_screen/home_page.dart';
+import 'package:yt_downloader/screens/video_player/video_player.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,10 +22,12 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => APIContent()),
       ],
-      child: const MaterialApp(
+      child: MaterialApp(
         debugShowCheckedModeBanner: false,
+        builder: BotToastInit(),
+        navigatorObservers: [BotToastNavigatorObserver()],
         title: 'YouTube Downloader',
-        home: BottomBarNavigation(),
+        home: const BottomBarNavigation(),
       ),
     );
   }
@@ -36,7 +42,7 @@ class BottomBarNavigation extends StatefulWidget {
 
 class _BottomBarNavigationState extends State<BottomBarNavigation> {
   final Color navigationBarColor = Colors.white;
-  final List<Widget> _pages = const [HomePage(), DownloadScreen()];
+  final List<Widget> _pages = const [HomePage(), FavouriteScreen(),DownloadScreen()];
   int selectedIndex = 0;
   late PageController pageController;
   void onPageChanged(int index){
@@ -84,6 +90,9 @@ class _BottomBarNavigationState extends State<BottomBarNavigation> {
             BarItem(
                 filledIcon: Icons.favorite_rounded,
                 outlinedIcon: Icons.favorite_border_rounded),
+            BarItem(
+                filledIcon: EvaIcons.cloudDownloadOutline,
+                outlinedIcon: EvaIcons.downloadOutline),
           ]),
     );
   }

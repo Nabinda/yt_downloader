@@ -48,6 +48,9 @@ dependencies:
   provider: ^6.0.2
   auto_size_text: ^3.0.0
   water_drop_nav_bar: ^2.1.0+4
+  rxdart: ^0.27.3
+  numeral: ^1.2.5
+  timeago: ^3.2.1
 
 dev_dependencies:
   flutter_test:
